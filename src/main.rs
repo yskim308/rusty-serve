@@ -18,7 +18,7 @@ fn main() {
         };
 
         if let Err(e) = handle_connection(stream) {
-            eprintln!("failed to handle request a connection: {}", e);
+            eprintln!("failed to handle a connection: {}", e);
         }
     }
 }
