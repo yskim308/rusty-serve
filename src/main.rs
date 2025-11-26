@@ -9,14 +9,14 @@ fn main() {
     println!("listening on port 4000");
 
     for stream in listener.incoming() {
-
         let stream = match stream {
             Ok(s) => s,
-            Err(e) => { 
+            Err(e) => {
                 eprintln!("failed to establish a connection: {}", e);
                 continue;
             }
-        }
+        };
+
         if let Err(e) = handle_connection(stream) {
             eprintln!("failed to handle request a connection: {}", e);
         }
