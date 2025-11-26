@@ -1,4 +1,5 @@
 use std::{
+    fs,
     io::{BufRead, BufReader, Write},
     net::{TcpListener, TcpStream},
 };
@@ -8,9 +9,16 @@ fn main() {
     println!("listening on port 4000");
 
     for stream in listener.incoming() {
-        let stream = stream.unwrap();
+
+        let stream = match stream {
+            Ok(s) => s,
+            Err(e) => { 
+                eprint!("failed to establish a connection: {}", e);
+                continue;
+            }
+        }
         if let Err(e) = handle_connection(stream) {
-            eprint!("failed to establish a connection: {}", e);
+            eprint!("failed to handle request a connection: {}", e);
         }
     }
 }
@@ -27,8 +35,12 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), std::io::Error> {
         }
         http_request.push(line);
     }
-    let response = "HTTP/1.1 200 OK\r\n\r\n";
+    let status_line = "HTTP/1.1 200 OK\r\n\r\n";
+    let contents = fs::read_to_string("hello.html")?;
+    let length = contents.len();
+
+    let response = format!("{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}");
+
     stream.write_all(response.as_bytes())?;
-    println!("Request: {http_request:#?}");
     Ok(())
 }
