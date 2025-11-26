@@ -13,12 +13,12 @@ fn main() {
         let stream = match stream {
             Ok(s) => s,
             Err(e) => { 
-                eprint!("failed to establish a connection: {}", e);
+                eprintln!("failed to establish a connection: {}", e);
                 continue;
             }
         }
         if let Err(e) = handle_connection(stream) {
-            eprint!("failed to handle request a connection: {}", e);
+            eprintln!("failed to handle request a connection: {}", e);
         }
     }
 }
