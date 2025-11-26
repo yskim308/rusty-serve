@@ -1,5 +1,5 @@
 use std::{
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Write},
     net::{TcpListener, TcpStream},
 };
 
@@ -16,7 +16,7 @@ fn main() {
 }
 
 // todo: return Result, handle the code in a more readable way
-fn handle_connection(stream: TcpStream) -> Result<(), std::io::Error> {
+fn handle_connection(mut stream: TcpStream) -> Result<(), std::io::Error> {
     let buf_reader = BufReader::new(&stream);
     let mut http_request = Vec::new();
 
@@ -27,6 +27,8 @@ fn handle_connection(stream: TcpStream) -> Result<(), std::io::Error> {
         }
         http_request.push(line);
     }
+    let response = "HTTP/1.1 200 OK\r\n\r\n";
+    stream.write_all(response.as_bytes())?;
     println!("Request: {http_request:#?}");
     Ok(())
 }
