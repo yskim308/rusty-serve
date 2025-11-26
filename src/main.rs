@@ -9,17 +9,24 @@ fn main() {
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        handle_connection(stream);
+        if let Err(e) = handle_connection(stream) {
+            eprint!("failed to establish a connection: {}", e);
+        }
     }
 }
 
-fn handle_connection(mut stream: TcpStream) {
+// todo: return Result, handle the code in a more readable way
+fn handle_connection(stream: TcpStream) -> Result<(), std::io::Error> {
     let buf_reader = BufReader::new(&stream);
-    let http_request: Vec<_> = buf_reader
-        .lines()
-        .map(|result| result.unwrap())
-        .take_while(|line| !line.is_empty())
-        .collect();
+    let mut http_request = Vec::new();
 
-    println!("Request: {http_request:#?}")
+    for line_result in buf_reader.lines() {
+        let line = line_result?;
+        if line.is_empty() {
+            break;
+        }
+        http_request.push(line);
+    }
+    println!("Request: {http_request:#?}");
+    Ok(())
 }
