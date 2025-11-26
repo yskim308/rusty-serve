@@ -35,7 +35,7 @@ fn handle_connection(mut stream: TcpStream) -> Result<(), std::io::Error> {
         }
         http_request.push(line);
     }
-    let status_line = "HTTP/1.1 200 OK\r\n\r\n";
+    let status_line = "HTTP/1.1 200 OK";
     let contents = fs::read_to_string("hello.html")?;
     let length = contents.len();
 
